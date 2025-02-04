@@ -128,7 +128,7 @@ struct [[nodiscard]] Connection {
 		return !sever_requested_ && !callback_.expired();
 	}
 
-	/// @breif The type of value returned by invoking the callback.
+	/// @brief The type of value returned by invoking the callback.
 	using InvokeResult =
 	    std::conditional_t<std::is_void_v<RT>, void, std::optional<RT>>;
 

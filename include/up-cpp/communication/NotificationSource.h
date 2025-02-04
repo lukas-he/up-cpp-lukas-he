@@ -37,7 +37,7 @@ struct NotificationSource {
 	///       provided attributes.
 	///
 	/// @param transport Transport to publish messages on.
-	/// @param sink URI of this uE. The authority and entity will be replaced
+	/// @param source URI of this uE. The authority and entity will be replaced
 	///             automatically with those found in the transport's default.
 	/// @param sink URI of the uE notifications will be sent to.
 	/// @param payload_format (Optional) If sending a payload, this sets the

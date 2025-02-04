@@ -4,3 +4,5 @@ build/*
 .vscode
 CMakeUserPresets.json
 *.swp
+docs/html/*
+docs/latex/*
