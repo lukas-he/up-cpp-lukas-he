@@ -98,6 +98,14 @@ Once the tests complete, the Unit Test Coverage report can be generated from the
 
 See: [up-conan-recipes][conan-recipe-repo]
 
+## Generate Documentation via doxygen
+Make sure you have `doxygen` and `graphviz` installed. Make any necessary changes to the doxygen configuration file `Doxyfile`. Then run the following command in the root directory:
+```
+doxygen
+```
+Finally, the documentation is available in the folders `\html` and `\latex` of the `\docs` directory.
+
+
 ## Show your support
 
 Give a ⭐️ if this project helped you!
