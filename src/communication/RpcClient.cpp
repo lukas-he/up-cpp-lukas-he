@@ -124,9 +124,9 @@ RpcClient::InvokeHandle RpcClient::invokeMethod(v1::UMessage&& request,
 	// attempt to call the callback succeeds.
 	auto callback_once = std::make_shared<std::once_flag>();
 
-	auto [callback_handle, callable] =
-	    Connection::establish(std::move(callback));
-
+	auto callback_result = Connection::establish(std::move(callback));
+	auto& callback_handle = std::get<0>(callback_result);
+	auto& callable = std::get<1>(callback_result);
 	///////////////////////////////////////////////////////////////////////////
 	// Wraps the callback to handle receive filtering and commstatus checking.
 	// This is likely less efficient than a single shared callback that maps
@@ -134,23 +134,23 @@ RpcClient::InvokeHandle RpcClient::invokeMethod(v1::UMessage&& request,
 	// characterize performance.
 	auto wrapper = [callable, reqid = std::move(reqid),
 	                callback_once](const v1::UMessage& m) mutable {
-		using MsgDiff = google::protobuf::util::MessageDifferencer;
-		if (MsgDiff::Equals(m.attributes().reqid(), reqid)) {
-			if (m.attributes().commstatus() == v1::UCode::OK) {
-				std::call_once(*callback_once, [&callable, &m]() {
-					MessageOrStatus message(m);
-					callable(std::move(message));
-				});
-			} else {
-				v1::UStatus status;
-				status.set_code(m.attributes().commstatus());
-				status.set_message("Received response with !OK commstatus");
+	    using MsgDiff = google::protobuf::util::MessageDifferencer;
+	    if (MsgDiff::Equals(m.attributes().reqid(), reqid)) {
+	        if (m.attributes().commstatus() == v1::UCode::OK) {
+	            std::call_once(*callback_once, [&callable, &m]() {
+	                MessageOrStatus message(m);
+	                callable(std::move(message));
+	            });
+	        } else {
+	            v1::UStatus status;
+	            status.set_code(m.attributes().commstatus());
+	            status.set_message("Received response with !OK commstatus");
 				std::call_once(*callback_once, [&callable,
 				                                status = std::move(status)]() {
-					callable(utils::Unexpected<v1::UStatus>(std::move(status)));
-				});
-			}
-		}
+	                callable(utils::Unexpected<v1::UStatus>(std::move(status)));
+	            });
+	        }
+	    }
 	};
 	///////////////////////////////////////////////////////////////////////////
 
@@ -158,10 +158,10 @@ RpcClient::InvokeHandle RpcClient::invokeMethod(v1::UMessage&& request,
 	// Called when the request has expired or failed. Will be handed off to the
 	// expiration monitoring service once the request has been sent.
 	auto expire = [callable, callback_once](v1::UStatus&& reason) mutable {
-		std::call_once(
-		    *callback_once, [&callable, reason = std::move(reason)]() {
-			    callable(utils::Unexpected<v1::UStatus>(std::move(reason)));
-		    });
+	    std::call_once(
+	        *callback_once, [&callable, reason = std::move(reason)]() {
+	            callable(utils::Unexpected<v1::UStatus>(std::move(reason)));
+	        });
 	};
 	///////////////////////////////////////////////////////////////////////////
 

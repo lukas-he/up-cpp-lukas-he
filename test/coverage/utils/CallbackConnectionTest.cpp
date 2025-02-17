@@ -583,9 +583,12 @@ TEST_F(CallbackTest, HandleResetBlocksWhileCallbacksRunning) {
 	// for startup synchronization.
 	SemaphoreLike callee_sync;
 
-	auto [handle, callable] = callbacks::Connection<bool>::establish(
-	    [&fake_blocking_op]() { return fake_blocking_op.try_acquire_for(1s); });
+    auto connection = callbacks::Connection<bool>::establish(
+        [&fake_blocking_op]() { return fake_blocking_op.try_acquire_for(1s); });
 
+    auto& handle = std::get<0>(connection);
+    auto& callable = std::get<1>(connection);
+	
 	auto caller_fn = ([callable, &callbacks_pending, &callbacks_released,
 	                   &main_task_sync]() mutable {
 		++callbacks_pending;
