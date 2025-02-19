@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ "main", "v1.0_up-v1.6.0" ]
+    branches: ["**"]
   pull_request:
     branches: ["**"]
 
@@ -123,10 +123,15 @@ jobs:
       - name: Run Valgrind Memcheck
         continue-on-error: true
         run: |
+          pwd
+          ls -R
+          echo "ls 1"
           cd up-cpp/build/Release
           chmod +x bin/*
           mkdir -p valgrind_logs
           : > valgrind_logs/valgrind_memcheck_summary.log
+          ls -R
+          echo "ls 2"
           declare -A EXCLUDE_TESTS
           while IFS= read -r line; do
             test_binary=$(echo $line | cut -d'.' -f1)
