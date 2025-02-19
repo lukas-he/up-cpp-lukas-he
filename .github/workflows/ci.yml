@@ -132,6 +132,8 @@ jobs:
           : > valgrind_logs/valgrind_memcheck_summary.log
           ls -R
           echo "ls 2"
+          cat valgrind_exclude_test_memcheck.txt
+          echo "logged content of file"
           declare -A EXCLUDE_TESTS
           while IFS= read -r line; do
             test_binary=$(echo $line | cut -d'.' -f1)
