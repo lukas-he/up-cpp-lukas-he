@@ -75,7 +75,7 @@ jobs:
 
   test:
     name: Run up-cpp tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: build
 
     steps:
@@ -102,7 +102,7 @@ jobs:
 # NOTE: Run dynamic analysis in unit tests
   memcheck:
     name: Run Valgrind Memcheck
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: build
 
     steps:
@@ -170,7 +170,7 @@ jobs:
 
   threadcheck:
     name: Run Valgrind ThreadCheck
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: build
 
     steps:
@@ -239,7 +239,7 @@ jobs:
 
   helgrind:
     name: Run Valgrind Helgrind
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: build
 
     steps:
@@ -308,7 +308,7 @@ jobs:
 
   dhat:
     name: Run Valgrind DHAT
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: build
 
     steps:
@@ -377,7 +377,7 @@ jobs:
 
   lint:
     name: Lint C++ sources
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: build
 
     steps:
