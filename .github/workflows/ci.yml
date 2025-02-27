@@ -433,7 +433,6 @@ jobs:
           fi
 
       - name: Debug Missing Headers
-        if: failure()  # Runs this step only if the preceding steps have failed
         shell: bash
         run: |
           echo "Debugging missing headers..."
