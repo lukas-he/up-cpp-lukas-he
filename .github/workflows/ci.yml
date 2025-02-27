@@ -392,11 +392,6 @@ jobs:
         with:
           path: up-cpp
 
-      - name: Get build commands
-        uses: actions/download-artifact@v4
-        with:
-          name: compile-commands
-
       - name: Install Conan
         id: conan
         uses: turtlebrowser/get-conan@main
@@ -420,12 +415,16 @@ jobs:
         run: |
           conan cache restore conan-cache.tgz
 
-
       - name: Get build artifacts
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
           path: up-cpp/build/Release
+
+      - name: Get build commands
+        uses: actions/download-artifact@v4
+        with:
+          name: compile-commands
 
       - name: Run linters on source
         continue-on-error: true
