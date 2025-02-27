@@ -415,10 +415,11 @@ jobs:
         run: |
           conan cache restore conan-cache.tgz
 
-      - name: Get build commands
+      - name: Get build artifacts
         uses: actions/download-artifact@v4
         with:
-          name: compile-commands
+          name: build-artifacts
+          path: up-cpp/build/Release
 
       - name: Check protobuf installation
         shell: bash
@@ -427,10 +428,16 @@ jobs:
           if [ ! -d "/usr/include/google/protobuf" ]; then
             echo "Protobuf headers not found!"
             echo "Installing protobuf..."
-            sudo apt-get update && sudo apt-get install -y protobuf-compiler libprotobuf-dev
           else
             echo "Protobuf headers found."
           fi
+
+      - name: Debug missing headers
+        shell: bash
+        run: |
+          echo "Debugging missing headers..."
+          find up-cpp -name message_differencer.h
+          find up-cpp -name gtest.h          
 
       - name: Run linters on source
         continue-on-error: true
