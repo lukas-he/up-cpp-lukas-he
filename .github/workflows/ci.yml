@@ -426,6 +426,18 @@ jobs:
         with:
           name: compile-commands
 
+      - name: Check protobuf installation
+        shell: bash
+        run: |
+          echo "Checking for protobuf headers..."
+          if [ ! -d "/usr/include/google/protobuf" ]; then
+            echo "Protobuf headers not found!"
+            echo "Installing protobuf..."
+            sudo apt-get update && sudo apt-get install -y protobuf-compiler libprotobuf-dev
+          else
+            echo "Protobuf headers found."
+          fi
+
       - name: Run linters on source
         continue-on-error: true
         id: source-linter
