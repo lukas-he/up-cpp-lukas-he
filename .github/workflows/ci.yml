@@ -437,7 +437,8 @@ jobs:
           style: 'file' # read .clang-format for configuration
           tidy-checks: '' # Read .clang-tidy for configuration
           database: build/Release/compile_commands.json
-          version: 17
+          version: 12
+          verbosity: 'debug'
           
       - name: Run linters on tests
         continue-on-error: true
@@ -451,7 +452,7 @@ jobs:
           style: 'file' # read .clang-format for configuration
           tidy-checks: '' # Read .clang-tidy for configuration
           database: build/Release/compile_commands.json
-          version: 17
+          version: 12
 
       - name: Report lint failure
         if: steps.source-linter.outputs.checks-failed > 0 || steps.test-linter.outputs.checks-failed > 0
