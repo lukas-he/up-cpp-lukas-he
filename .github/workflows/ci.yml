@@ -12,16 +12,16 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
+      - name: Fetch up-cpp
+        uses: actions/checkout@v4
+        with:
+          path: up-cpp
+
       - name: Install Conan
         id: conan
         uses: turtlebrowser/get-conan@main
         with:
           version: 2.3.2
-
-      - name: Fetch up-cpp
-        uses: actions/checkout@v4
-        with:
-          path: up-cpp
 
       - name: Install conan CI profile
         shell: bash
@@ -381,6 +381,11 @@ jobs:
     needs: build
 
     steps:
+      - name: Fetch up-cpp
+        uses: actions/checkout@v4
+        with:
+          path: up-cpp
+
       - name: Get build commands
         uses: actions/download-artifact@v4
         with:
@@ -392,8 +397,12 @@ jobs:
         with:
           version: 2.3.2
 
-      - name: Create default Conan profile
-        run: conan profile detect
+      - name: Install conan CI profile
+        shell: bash
+        run: |
+          conan profile detect
+          cp up-cpp/.github/workflows/ci_conan_profile "$(conan profile path default)"
+          conan profile show
 
       - name: Get conan cache
         uses: actions/download-artifact@v4
@@ -405,10 +414,6 @@ jobs:
         run: |
           conan cache restore conan-cache.tgz
 
-      - name: Fetch up-cpp
-        uses: actions/checkout@v4
-        with:
-          path: up-cpp
 
       - name: Run linters on source
         id: source-linter
