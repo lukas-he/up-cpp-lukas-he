@@ -432,12 +432,23 @@ jobs:
             echo "Protobuf headers found."
           fi
 
-      - name: Debug missing headers
+      - name: Debug Missing Headers
+        if: failure()  # Runs this step only if the preceding steps have failed
         shell: bash
         run: |
           echo "Debugging missing headers..."
-          find up-cpp -name message_differencer.h
-          find up-cpp -name gtest.h          
+          if find up-cpp -name "message_differencer.h" | grep .; then
+            echo "Found 'message_differencer.h'"
+          else
+            echo "'message_differencer.h' not found in the project directory."
+          fi
+      
+          if find up-cpp -name "gtest.h" | grep .; then
+            echo "Found 'gtest.h'"
+          else
+            echo "'gtest.h' not found in the project directory."
+          fi
+        
 
       - name: Run linters on source
         continue-on-error: true
