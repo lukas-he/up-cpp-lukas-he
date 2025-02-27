@@ -4,6 +4,7 @@ protobuf/3.21.12
 
 [test_requires]
 gtest/1.14.0
+protobuf/3.21.12
 
 [generators]
 CMakeDeps
