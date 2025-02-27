@@ -53,6 +53,12 @@ jobs:
           cd build/Release
           cmake --build . -- -j
 
+      - name: Debug Conan Directory
+        shell: bash
+        run: |
+          conan cache path
+        
+
       - name: Save conan cache to archive
         shell: bash
         run: |
@@ -427,7 +433,6 @@ jobs:
           echo "Checking for protobuf headers..."
           if [ ! -d "/usr/include/google/protobuf" ]; then
             echo "Protobuf headers not found!"
-            echo "Installing protobuf..."
           else
             echo "Protobuf headers found."
           fi
