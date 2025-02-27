@@ -4,7 +4,8 @@ spdlog/[~1.13]
 protobuf/[~3.21]
 
 [test_requires]
-gtest/[~1.14]
+gtest/1.14.0
+
 
 [generators]
 CMakeDeps

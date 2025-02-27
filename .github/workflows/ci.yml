@@ -12,19 +12,19 @@ permissions:
 jobs:
   build:
     name: Build up-cpp and dependencies
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
+      - name: Fetch up-cpp
+        uses: actions/checkout@v4
+        with:
+          path: up-cpp
+
       - name: Install Conan
         id: conan
         uses: turtlebrowser/get-conan@main
         with:
           version: 2.3.2
-
-      - name: Fetch up-cpp
-        uses: actions/checkout@v4
-        with:
-          path: up-cpp
 
       - name: Install conan CI profile
         shell: bash
@@ -53,6 +53,12 @@ jobs:
           cd build/Release
           cmake --build . -- -j
 
+      - name: Debug Conan Directory
+        shell: bash
+        run: |
+          conan cache path
+        
+
       - name: Save conan cache to archive
         shell: bash
         run: |
@@ -78,7 +84,7 @@ jobs:
 
   test:
     name: Run up-cpp tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: build
 
     steps:
@@ -105,7 +111,7 @@ jobs:
 # NOTE: Run dynamic analysis in unit tests
   memcheck:
     name: Run Valgrind Memcheck
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: build
 
     steps:
@@ -173,7 +179,7 @@ jobs:
 
   threadcheck:
     name: Run Valgrind ThreadCheck
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: build
 
     steps:
@@ -242,7 +248,7 @@ jobs:
 
   helgrind:
     name: Run Valgrind Helgrind
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: build
 
     steps:
@@ -311,7 +317,7 @@ jobs:
 
   dhat:
     name: Run Valgrind DHAT
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: build
 
     steps:
@@ -380,17 +386,17 @@ jobs:
 
   lint:
     name: Lint C++ sources
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: build
     permissions:
       contents: write
       pull-requests: read
 
     steps:
-      - name: Get build commands
-        uses: actions/download-artifact@v4
+      - name: Fetch up-cpp
+        uses: actions/checkout@v4
         with:
-          name: compile-commands
+          path: up-cpp
 
       - name: Install Conan
         id: conan
@@ -398,8 +404,12 @@ jobs:
         with:
           version: 2.3.2
 
-      - name: Create default Conan profile
-        run: conan profile detect
+      - name: Install conan CI profile
+        shell: bash
+        run: |
+          conan profile detect
+          cp up-cpp/.github/workflows/ci_conan_profile "$(conan profile path default)"
+          conan profile show
 
       - name: Get conan cache
         uses: actions/download-artifact@v4
@@ -411,16 +421,38 @@ jobs:
         run: |
           conan cache restore conan-cache.tgz
 
-      - name: Fetch up-cpp
-        uses: actions/checkout@v4
-        with:
-          path: up-cpp
-
       - name: Get build artifacts
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
           path: up-cpp/build/Release
+
+      - name: Check protobuf installation
+        shell: bash
+        run: |
+          echo "Checking for protobuf headers..."
+          if [ ! -d "/usr/include/google/protobuf" ]; then
+            echo "Protobuf headers not found!"
+          else
+            echo "Protobuf headers found."
+          fi
+
+      - name: Debug Missing Headers
+        shell: bash
+        run: |
+          echo "Debugging missing headers..."
+          if find up-cpp -name "message_differencer.h" | grep .; then
+            echo "Found 'message_differencer.h'"
+          else
+            echo "'message_differencer.h' not found in the project directory."
+          fi
+      
+          if find up-cpp -name "gtest.h" | grep .; then
+            echo "Found 'gtest.h'"
+          else
+            echo "'gtest.h' not found in the project directory."
+          fi
+        
 
       - name: Run linters on source
         continue-on-error: true
