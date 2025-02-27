@@ -5,6 +5,9 @@ on:
     branches: [ "main", "v1.0_up-v1.6.0" ]
   pull_request:
     branches: ["**"]
+
+permissions:
+  contents: read
   
 jobs:
   build:
@@ -39,7 +42,7 @@ jobs:
       - name: Build up-core-api conan package
         shell: bash
         run: |
-          conan create --version 1.6.0-alpha2 up-conan-recipes/up-core-api/release
+          conan create --version 1.6.0-alpha3 up-conan-recipes/up-core-api/release
 
       - name: Build up-cpp with tests
         shell: bash
@@ -379,6 +382,9 @@ jobs:
     name: Lint C++ sources
     runs-on: ubuntu-22.04
     needs: build
+    permissions:
+      contents: write
+      pull-requests: read
 
     steps:
       - name: Fetch up-cpp
@@ -415,7 +421,14 @@ jobs:
           conan cache restore conan-cache.tgz
 
 
+      - name: Get build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: up-cpp/build/Release
+
       - name: Run linters on source
+        continue-on-error: true
         id: source-linter
         uses: cpp-linter/cpp-linter-action@v2
         env:
@@ -425,9 +438,10 @@ jobs:
           ignore: 'test'
           style: 'file' # read .clang-format for configuration
           tidy-checks: '' # Read .clang-tidy for configuration
-          database: compile_commands.json
+          database: build/Release/compile_commands.json
 
       - name: Run linters on tests
+        continue-on-error: true
         id: test-linter
         uses: cpp-linter/cpp-linter-action@v2
         env:
@@ -437,7 +451,7 @@ jobs:
           ignore: 'src|include'
           style: 'file' # read .clang-format for configuration
           tidy-checks: '' # Read .clang-tidy for configuration
-          database: compile_commands.json
+          database: build/Release/compile_commands.json
 
       - name: Report lint failure
         if: steps.source-linter.outputs.checks-failed > 0 || steps.test-linter.outputs.checks-failed > 0

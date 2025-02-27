@@ -1,6 +1,6 @@
 # uProtocol C++ Interface Library (up-cpp)
 
-[![Build & Test](https://github.com/eclipse-uprotocol/up-cpp/actions/workflows/ci.yml/badge.svg?branch=v1.0_up-v1.6.0)](https://github.com/eclipse-uprotocol/up-cpp/actions/workflows/ci.yml)
+[![CI](https://github.com/eclipse-uprotocol/up-cpp/actions/workflows/ci.yml/badge.svg)](https://github.com/eclipse-uprotocol/up-cpp/actions/workflows/ci.yml)
 
 ## Welcome!
 
@@ -24,7 +24,7 @@ implementation, such as [up-transport-zenoh-cpp][zenoh-transport-repo].
 Using the recipes found in [up-conan-recipes][conan-recipe-repo], build these
 Conan packages:
 
-1. [up-core-api][spec-repo]: `conan create --version 1.6.0-alpha2 --build=missing up-core-api/release`
+1. [up-core-api][spec-repo]: `conan create --version 1.6.0-alpha3 --build=missing up-core-api/release`
 
 **NOTE:** all `conan` commands in this document use  Conan 2.x syntax. Please
 adjust accordingly when using Conan 1.x.

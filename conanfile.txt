@@ -1,10 +1,12 @@
 [requires]
-up-core-api/1.6.0-alpha2
-protobuf/3.21.12
+up-core-api/[~1.6, include_prerelease]
+spdlog/[~1.13]
+protobuf/[~3.21]
 
 [test_requires]
 gtest/1.14.0
 protobuf/3.21.12
+
 
 [generators]
 CMakeDeps
